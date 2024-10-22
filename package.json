@@ -1,0 +1,14 @@
+{
+  "name": "totp",
+  "version": "1.0.0",
+  "description": "rfc6238 time-based one-time password (TOTP) implementation",
+  "type": "module",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "node .",
+    "test": "./test.bash"
+  },
+  "author": "Ed Puckett",
+  "license": "ISC"
+}

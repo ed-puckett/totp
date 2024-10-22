@@ -1,0 +1,7 @@
+{
+    "t0":        0,
+    "period":    30,
+    "digits":    8,
+    "algorithm": "sha1",
+    "secret":    "12345678901234567890"
+}
