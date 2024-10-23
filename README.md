@@ -6,9 +6,10 @@ This work is based on rfc6238.  See LINKS below.
 
 Install nodejs.  Then see USAGE below to run.
 
-* Tested on Debian Linux 12
-* Works with node v23.0.0
-* Works with deno 2.0.2 (stable, release, x86_64-unknown-linux-gnu)
+* (Tests performed under Debian Linux 12)
+* Tested on node v23.0.0
+* Tested on deno 2.0.2 (stable, release, x86_64-unknown-linux-gnu)
+* Tested on bun 1.1.32
 
 ## USAGE
 
@@ -24,6 +25,7 @@ Install nodejs.  Then see USAGE below to run.
         "period":    (default: 30) a positive integer
         "digits":    (default: 6) one of: 6, 7, 8
         "algorithm": (default: "sha1") one of: "sha1", "sha256", "sha512"
+        "secret_t":  (default: "base32") one of: "string", "base32"
         "secret":    (required) a non-empty string
 
     (Please refer to rfc6238 for the exact meaning of the configuration parameters.)
@@ -42,11 +44,14 @@ Install nodejs.  Then see USAGE below to run.
 * ==> cat ./example-config.json
 
 ```
+        // Note that these style comments are supported in imported JSON
+        // ... but only at the beginning of lines
     {
         "t0":        0,
         "period":    30,
         "digits":    8,
         "algorithm": "sha1",
+        "secret_t":  "string",
         "secret":    "12345678901234567890"
     }
 ```
@@ -57,16 +62,16 @@ Install nodejs.  Then see USAGE below to run.
     94287082
 ````
 
-* ==> ./index.js '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha1", "secret": "12345678901234567890" }' 59
+* ==> ./index.js '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha1", "secret_t": "string", "secret": "12345678901234567890" }' 59
 
 ```
     94287082
 ````
 
-* ==> ./index.js '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha1", "secret": "12345678901234567890" }'  # now
+* ==> ./index.js '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha1", "secret_t": "string", "secret": "12345678901234567890" }'  # now
 
 ```
-    13083528
+    26813857
 ````
 
 ## SECURITY
@@ -80,3 +85,4 @@ I suggest you create a configuration files in a well-controlled location and loc
 * [rfc6238](https://datatracker.ietf.org/doc/html/rfc6238) TOTP: Time-Based One-Time Password Algorithm
 * [rfc4226](https://datatracker.ietf.org/doc/html/rfc4226) HOTP: An HMAC-Based One-Time Password Algorithm
 * [rfc2104](https://datatracker.ietf.org/doc/html/rfc2104) HMAC: Keyed-Hashing for Message Authentication
+* [rfc4648](https://datatracker.ietf.org/doc/html/rfc4648) The Base16, Base32, and Base64 Data Encodings

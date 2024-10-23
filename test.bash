@@ -58,6 +58,7 @@ declare fail_count=0
 
 function test() {  # -- {config} {time} {expected}
     declare config=$1 time=$2 expected=$3
+    echo "----------------------------------------------------------------------"
     declare result=$("${THIS_FILE_DIR}/index.js" "${config}" "${time}")
     declare verdict
     if [[ "${result}" == "${expected}" ]]; then
@@ -66,7 +67,6 @@ function test() {  # -- {config} {time} {expected}
         (( fail_count++ ))
         verdict=FAIL
     fi
-    echo "----------------------------------------------------------------------"
     echo "config:   ${config}"
     echo "time:     ${time}"
     echo "expected: ${expected}"
@@ -78,29 +78,35 @@ declare sha1_secret=12345678901234567890
 declare sha256_secret=12345678901234567890123456789012
 declare sha512_secret=1234567890123456789012345678901234567890123456789012345678901234
 
-test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha1",   "secret": "'"${sha1_secret}"'"   }' 59          94287082
-test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha256", "secret": "'"${sha256_secret}"'" }' 59          46119246
-test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha512", "secret": "'"${sha512_secret}"'" }' 59          90693936
-test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha1",   "secret": "'"${sha1_secret}"'"   }' 1111111109  07081804
-test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha256", "secret": "'"${sha256_secret}"'" }' 1111111109  68084774
-test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha512", "secret": "'"${sha512_secret}"'" }' 1111111109  25091201
-test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha1",   "secret": "'"${sha1_secret}"'"   }' 1111111111  14050471
-test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha256", "secret": "'"${sha256_secret}"'" }' 1111111111  67062674
-test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha512", "secret": "'"${sha512_secret}"'" }' 1111111111  99943326
-test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha1",   "secret": "'"${sha1_secret}"'"   }' 1234567890  89005924
-test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha256", "secret": "'"${sha256_secret}"'" }' 1234567890  91819424
-test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha512", "secret": "'"${sha512_secret}"'" }' 1234567890  93441116
-test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha1",   "secret": "'"${sha1_secret}"'"   }' 2000000000  69279037
-test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha256", "secret": "'"${sha256_secret}"'" }' 2000000000  90698825
-test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha512", "secret": "'"${sha512_secret}"'" }' 2000000000  38618901
-test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha1",   "secret": "'"${sha1_secret}"'"   }' 20000000000 65353130
-test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha256", "secret": "'"${sha256_secret}"'" }' 20000000000 77737706
-test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha512", "secret": "'"${sha512_secret}"'" }' 20000000000 47863826
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha1",   "secret_t": "string", "secret": "'"${sha1_secret}"'"   }' 59          94287082
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha256", "secret_t": "string", "secret": "'"${sha256_secret}"'" }' 59          46119246
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha512", "secret_t": "string", "secret": "'"${sha512_secret}"'" }' 59          90693936
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha1",   "secret_t": "string", "secret": "'"${sha1_secret}"'"   }' 1111111109  07081804
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha256", "secret_t": "string", "secret": "'"${sha256_secret}"'" }' 1111111109  68084774
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha512", "secret_t": "string", "secret": "'"${sha512_secret}"'" }' 1111111109  25091201
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha1",   "secret_t": "string", "secret": "'"${sha1_secret}"'"   }' 1111111111  14050471
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha256", "secret_t": "string", "secret": "'"${sha256_secret}"'" }' 1111111111  67062674
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha512", "secret_t": "string", "secret": "'"${sha512_secret}"'" }' 1111111111  99943326
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha1",   "secret_t": "string", "secret": "'"${sha1_secret}"'"   }' 1234567890  89005924
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha256", "secret_t": "string", "secret": "'"${sha256_secret}"'" }' 1234567890  91819424
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha512", "secret_t": "string", "secret": "'"${sha512_secret}"'" }' 1234567890  93441116
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha1",   "secret_t": "string", "secret": "'"${sha1_secret}"'"   }' 2000000000  69279037
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha256", "secret_t": "string", "secret": "'"${sha256_secret}"'" }' 2000000000  90698825
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha512", "secret_t": "string", "secret": "'"${sha512_secret}"'" }' 2000000000  38618901
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha1",   "secret_t": "string", "secret": "'"${sha1_secret}"'"   }' 20000000000 65353130
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha256", "secret_t": "string", "secret": "'"${sha256_secret}"'" }' 20000000000 77737706
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha512", "secret_t": "string", "secret": "'"${sha512_secret}"'" }' 20000000000 47863826
+
+/usr/bin/env node -e 'import("./base32.js").then(module => module.test());'
+declare base32_test_exit_code=$?
+if (( base32_test_exit_code != 0 )); then
+    (( fail_count += ${base32_test_exit_code} ))
+fi
 
 echo
 if (( fail_count == 0 )); then
     echo "ALL TESTS PASSED"
 else
-    echo "** ${fail_count} test$( (( fail_count != 1 )) && echo 's' ) failed"
+    echo "** ${fail_count} total test$( (( fail_count != 1 )) && echo 's' ) failed"
     exit 1
 fi

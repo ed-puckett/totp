@@ -4,10 +4,13 @@
 // https://datatracker.ietf.org/doc/html/rfc6238 "TOTP: Time-Based One-Time Password Algorithm"
 // https://datatracker.ietf.org/doc/html/rfc4226 "HOTP: An HMAC-Based One-Time Password Algorithm"
 // https://datatracker.ietf.org/doc/html/rfc2104 "HMAC: Keyed-Hashing for Message Authentication"
+// https://datatracker.ietf.org/doc/html/rfc4648 "The Base16, Base32, and Base64 Data Encodings"
 
-import { readFileSync } from 'node:fs';
-import { Buffer       } from 'node:buffer';
-import { createHmac   } from 'node:crypto';
+import process           from 'node:process'
+import { readFileSync  } from 'node:fs';
+import { Buffer        } from 'node:buffer';
+import { createHmac    } from 'node:crypto';
+import { decode_base32 } from './base32.js';
 
 
 // note: process.argv[0] is the path to the node executable
@@ -43,6 +46,8 @@ const valid_digits = [ 6, 7, 8 ];
 
 const valid_algorithm = [ 'sha1', 'sha256', 'sha512' ];
 
+const valid_secret_t = [ 'string', 'base32' ];  // each of these must be handled in decode_secret() below
+
 const config_definition = {
     t0: {
         default_value: 0,
@@ -64,11 +69,16 @@ const config_definition = {
         description:   `one of: "${valid_algorithm.join('", "')}"`,
         is_valid:      value => (typeof value === 'string' && valid_algorithm.includes(value)),
     },
+    secret_t: {
+        default_value: 'base32',
+        description:   `one of: "${valid_secret_t.join('", "')}"`,
+        is_valid:      value => (typeof value === 'string' && valid_secret_t.includes(value)),
+    },
     secret: {
         // must be specified; no default_value
         description:   `a non-empty string`,
         is_valid:      value => (typeof value === 'string' && value.length > 0),
-    }
+    },
 };
 
 function show_usage(message, output=console.error) {
@@ -114,10 +124,10 @@ function get_config(config_spec) {
         const config_json = (config_spec?.[0] === config_spec_file_specifier)
               ? readFileSync(config_spec.slice(config_spec_file_specifier.length), { encoding: 'utf8' })
               : config_spec;
+        const uncommented_config_json = config_json.replaceAll(/^[\s]*[/][/].*$/gm, '')
 
-        const config = JSON.parse(config_json);
+        const config = JSON.parse(uncommented_config_json);
 
-        const valid_keys = Object.keys(config_definition);
         for (const key in config) {
             if (!(key in config_definition)) {
                 throw new Error(`extraneous key "${key}" is not one of: "${Object.keys(config_definition).join('", "')}"`);
@@ -126,7 +136,7 @@ function get_config(config_spec) {
         for (const key in config_definition) {
             const definition = config_definition[key];
             if (!(key in config)) {
-                default_value = definition.default_value;
+                const default_value = definition.default_value;
                 if (typeof default_value === 'undefined') {
                     throw new Error(`"${key}" must be specified and must be ${definition.description}`);
                 }
@@ -199,9 +209,29 @@ function truncate(config, hex_string) {
     return result_digits;
 }
 
+function decode_secret(config) {
+    switch (config.secret_t) {
+        case 'string': {
+            return config.secret;
+        }
+        break;
+
+        case 'base32': {
+            try {
+                return decode_base32(config.secret, verbose);
+            } catch (error) {
+                show_usage(`bad secret: ${error.message}`);
+            }
+        }
+        break;
+
+        default: throw new Error(`unexpected: config contains unknown secret_t: ${config.secret_t}`);
+    }
+}
+
 function generate_totp(config, optional_time) {  // optional_time defaults to seconds_from_date_time_units(Date.now())
     const counter = get_time_based_counter_string(config, optional_time);
-    const hmac = createHmac(config.algorithm, config.secret);
+    const hmac = createHmac(config.algorithm, decode_secret(config));
     hmac.update(buffer_from_counter_hex_string(counter));
     const digest = hmac.digest('hex');
     const totp = truncate(config, digest);
