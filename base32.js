@@ -1,10 +1,6 @@
 // base32.js
 
-import process    from 'node:process'
-import { Buffer } from 'node:buffer';
-
-// See:
-// https://datatracker.ietf.org/doc/html/rfc4648 "The Base16, Base32, and Base64 Data Encodings"
+// See: https://datatracker.ietf.org/doc/html/rfc4648 "The Base16, Base32, and Base64 Data Encodings"
 
 
 export function decode_base32(base32_string, verbose=false) {
@@ -53,7 +49,7 @@ export function decode_base32(base32_string, verbose=false) {
     if (bits !== 0) {
         throw new Error(`after decoding base32_string, bits = ${bits} !== 0; the last encoded bits must have been improperly padded`);
     }
-    const result = Buffer.from(result_values);
+    const result = Uint8Array.from(result_values);
     if (verbose) {
         console.log('decode_base32:', { base32_string, result_values, result, result_length: result.length });
     }
@@ -138,19 +134,23 @@ function buffer_equal(b1, b2) {
     return true;
 }
 
-export function test() {
+export async function test() {
+    const process = await import('node:process');
+
     let fail_count = 0;
 
-    for (const [ base32_string, expected ] of [
-        [ "",                 Buffer.from([]) ],
-        [ "AA======",         Buffer.from([ 0 ]) ],
-        [ "AE======",         Buffer.from([ 1 ]) ],
-        [ "PRUSAROP",         Buffer.from([ 0x7c, 0x69, 0x20, 0x45, 0xcf ]) ],
-        [ "PRUSAROPUU======", Buffer.from([ 0x7c, 0x69, 0x20, 0x45, 0xcf, 0xa5 ]) ],
-        [ "PRUSAROPUWSQ====", Buffer.from([ 0x7c, 0x69, 0x20, 0x45, 0xcf, 0xa5, 0xa5 ]) ],
-        [ "PRUSAROPUWS2K===", Buffer.from([ 0x7c, 0x69, 0x20, 0x45, 0xcf, 0xa5, 0xa5, 0xa5 ]) ],
-        [ "PRUSAROPUWS2LJI=", Buffer.from([ 0x7c, 0x69, 0x20, 0x45, 0xcf, 0xa5, 0xa5, 0xa5, 0xa5 ]) ],
+    for (const [ base32_string, expected_bytes ] of [
+        [ "",                 Uint8Array.from([]) ],
+        [ "AA======",         Uint8Array.from([ 0 ]) ],
+        [ "AE======",         Uint8Array.from([ 1 ]) ],
+        [ "PRUSAROP",         Uint8Array.from([ 0x7c, 0x69, 0x20, 0x45, 0xcf ]) ],
+        [ "PRUSAROPUU======", Uint8Array.from([ 0x7c, 0x69, 0x20, 0x45, 0xcf, 0xa5 ]) ],
+        [ "PRUSAROPUWSQ====", Uint8Array.from([ 0x7c, 0x69, 0x20, 0x45, 0xcf, 0xa5, 0xa5 ]) ],
+        [ "PRUSAROPUWS2K===", Uint8Array.from([ 0x7c, 0x69, 0x20, 0x45, 0xcf, 0xa5, 0xa5, 0xa5 ]) ],
+        [ "PRUSAROPUWS2LJI=", Uint8Array.from([ 0x7c, 0x69, 0x20, 0x45, 0xcf, 0xa5, 0xa5, 0xa5, 0xa5 ]) ],
     ]) {
+        const expected = Uint8Array.from(expected_bytes);
+
         let result;
         let error;
         try {
@@ -158,6 +158,7 @@ export function test() {
         } catch (e) {
             error = e;
         }
+
         let verdict;
         if (!error && buffer_equal(expected, result)) {
             verdict = 'PASS';
@@ -165,6 +166,7 @@ export function test() {
             fail_count++;
             verdict = 'FAIL';
         }
+
         console.log('----------------------------------------------------------------------');
         console.log('base32:  ', (base32_string ? base32_string : '""'));
         console.log('expected:', expected);

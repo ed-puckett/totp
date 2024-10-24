@@ -97,7 +97,11 @@ test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha1",   "secret_t": "
 test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha256", "secret_t": "string", "secret": "'"${sha256_secret}"'" }' 20000000000 77737706
 test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha512", "secret_t": "string", "secret": "'"${sha512_secret}"'" }' 20000000000 47863826
 
-/usr/bin/env node -e 'import("./base32.js").then(module => module.test());'
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha1",   "secret_t": "base32", "secret": "3RRURZ2HPRUSAROP"                                 }' 20000000000 99424537
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha256", "secret_t": "base32", "secret": "3RRURZ2HPRUSAROP3RRURZ2HPRUSAROP"                 }' 20000000000 44387095
+test '{ "t0": 0, "period": 30, "digits": 8, "algorithm": "sha512", "secret_t": "base32", "secret": "3RRURZ2HPRUSAROP3RRURZ2HPRUSAROP3RRURZ2HPRUSAROP" }' 20000000000 44206836
+
+/usr/bin/env node -e "import('${THIS_FILE_DIR}/base32.js').then(module => module.test());"
 declare base32_test_exit_code=$?
 if (( base32_test_exit_code != 0 )); then
     (( fail_count += ${base32_test_exit_code} ))

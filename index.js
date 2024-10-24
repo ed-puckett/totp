@@ -8,7 +8,6 @@
 
 import process           from 'node:process'
 import { readFileSync  } from 'node:fs';
-import { Buffer        } from 'node:buffer';
 import { createHmac    } from 'node:crypto';
 import { decode_base32 } from './base32.js';
 
@@ -174,7 +173,7 @@ function buffer_from_counter_hex_string(counter_hex_string) {
     for (let i = 0; i < counter_hex_string.length; i += 2) {
         bytes.push(16*parseInt(counter_hex_string[i], 16) + parseInt(counter_hex_string[i+1], 16));
     }
-    return Buffer.from(bytes);
+    return Uint8Array.from(bytes);
 }
 
 function remove_hex_digit_msb(hex_digit) {
